@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="EpubManager.ApiService/EpubManager.ApiService.csproj" />
+  <Project Path="EpubManager.AppHost/EpubManager.AppHost.csproj" />
+  <Project Path="EpubManager.Data/EpubManager.Data.csproj" />
+  <Project Path="EpubManager.ServiceDefaults/EpubManager.ServiceDefaults.csproj" />
+  <Project Path="EpubManager.Web/EpubManager.Web.csproj" />
+</Solution>

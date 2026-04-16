@@ -1,0 +1,72 @@
+﻿@page "/"
+@attribute [StreamRendering(true)]
+
+@inject CalibreApiClient CalibreApi
+
+<PageTitle>Books</PageTitle>
+
+<h1>Calibre books</h1>
+
+<p>The latest books from your Calibre library.</p>
+
+@if (!string.IsNullOrWhiteSpace(loadError))
+{
+	<div class="alert alert-danger" role="alert">
+		@loadError
+	</div>
+}
+else if (books is null)
+{
+	<p><em>Loading books...</em></p>
+}
+else if (books.Count == 0)
+{
+	<p>No books were found in the Calibre library.</p>
+}
+else
+{
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Title</th>
+				<th>Author</th>
+				<th>Path</th>
+				<th>Added</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var book in books)
+			{
+				<tr>
+					<td>@book.Id</td>
+					<td>@book.Title</td>
+					<td>@(string.IsNullOrWhiteSpace(book.AuthorSort) ? "-" : book.AuthorSort)</td>
+					<td><code>@book.Path</code></td>
+					<td>@(book.Timestamp?.ToLocalTime().ToString("g") ?? "-")</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	private IReadOnlyList<CalibreBook>? books;
+	private string? loadError;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			books = await CalibreApi.GetBooksAsync();
+		}
+		catch (HttpRequestException)
+		{
+			loadError = "The Calibre API could not be reached.";
+		}
+		catch (NotSupportedException)
+		{
+			loadError = "The Calibre API returned an unexpected response format.";
+		}
+	}
+}
